@@ -1,4 +1,5 @@
 import cv2
+import time
 import os
 from flask import Flask,request,render_template
 from datetime import date
@@ -112,8 +113,10 @@ def start():
         return render_template('home.html',totalreg=totalreg(),datetoday2=datetoday2,mess='There is no trained model in the static folder. Please add a new face to continue.') 
 
     cap = cv2.VideoCapture(0)
-    ret = True
-    while ret:
+    start_time = time.time()
+#while (time.time() - start_time) < 10:
+
+    while (time.time() - start_time) <= 35:
         ret,frame = cap.read()
         if extract_faces(frame)!=():
             (x,y,w,h) = extract_faces(frame)[0]
@@ -123,7 +126,7 @@ def start():
             add_attendance(identified_person)
             cv2.putText(frame,f'{identified_person}',(30,30),cv2.FONT_HERSHEY_SIMPLEX,1,(255, 0, 20),2,cv2.LINE_AA)
         cv2.imshow('Attendance',frame)
-        if cv2.waitKey(1)==27:
+        if cv2.waitKey(1) & 0xFF == ord('q'):
             break
     cap.release()
     cv2.destroyAllWindows()
@@ -141,7 +144,11 @@ def add():
         os.makedirs(userimagefolder)
     cap = cv2.VideoCapture(0)
     i,j = 0,0
-    while 1:
+    start_time = time.time()
+#while (time.time() - start_time) < 10:
+
+    while (time.time() - start_time) <= 35:
+    #while 1:
         _,frame = cap.read()
         faces = extract_faces(frame)
         for (x,y,w,h) in faces:
@@ -155,7 +162,7 @@ def add():
         if j==500:
             break
         cv2.imshow('Adding new User',frame)
-        if cv2.waitKey(1)==27:
+        if cv2.waitKey(1) & 0xFF == ord('q'):
             break
     cap.release()
     cv2.destroyAllWindows()
